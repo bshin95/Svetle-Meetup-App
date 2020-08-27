@@ -19,7 +19,8 @@
       description: 'In this meetup, we will have some experts that teach you how to code.',
       imageUrl: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
       address: '123 Broadway Ave, New York, New York 10005',
-      contactEmail: 'something@test.com'
+      contactEmail: 'something@test.com',
+      isFavorite: false
     },
     {
       id: 'm2',
@@ -28,7 +29,8 @@
       description: 'We teach beginners how to swim.',
       imageUrl: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80',
       address: '99 Broadway Ave, New York, New York 10005',
-      contactEmail: 'swimming@test.com'
+      contactEmail: 'swimming@test.com',
+      isFavorite: false
     }
   ];
 
@@ -45,6 +47,16 @@
 
     // meetups.push(newMeetup); //this does not work
     meetups = [newMeetup, ...meetups] //the = sign lets svelte recognize that it needs to be updated and then updates the DOM
+  }
+
+  function toggleFavorite(event) {
+    const id = event.detail
+    const updatedMeetup = { ...meetups.find(m => m.id === id)}
+    updatedMeetup.isFavorite = !updatedMeetup.isFavorite
+    const meetupIndex = meetups.findIndex(m => m.id === id);
+    const updatedMeetups = [...meetups];
+    updatedMeetups[meetupIndex] = updatedMeetup
+    meetups = updatedMeetups;
   }
 </script>
 
@@ -68,7 +80,6 @@
       id="title" 
       label="Title" 
       value={title} 
-      type="text"
       on:input="{(event) => (title = event.target.value)}"
     />
     <TextInput 
@@ -82,7 +93,6 @@
       id="address" 
       label="Address" 
       value={address}
-      type="text"
       on:input="{(event) => (address = event.target.value)}"
     />
     <TextInput 
@@ -108,5 +118,5 @@
     />
     <Button type="submit" caption="Save"/>
   </form>
-  <MeetupGrid {meetups}/>
+  <MeetupGrid {meetups} on:togglefavorite="{toggleFavorite}"/>
 </main>

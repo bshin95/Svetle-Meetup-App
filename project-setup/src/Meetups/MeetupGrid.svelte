@@ -38,6 +38,10 @@
       grid-template-columns: repeat(2, 1fr);
     }
   }
+
+  #no-meetups {
+    margin: 1rem;
+  }
 </style>
 
 <section id="meetup-controls">
@@ -45,7 +49,9 @@
 
   <Button on:click={() => dispatch('add')}>New Meetup</Button>
 </section>
-
+{#if filteredMeetups.length === 0}
+  <p id="no-meetups">No meetups found, please add some meetups.</p>
+{/if}
 <section id="meetups">
   {#each filteredMeetups as meetup (meetup.id)}
 <!-- loop through each meetups, which is the array above. store this in a variable called meetup -->

@@ -55,16 +55,55 @@
     // meetups.push(newMeetup); //this does not work
     // meetups = [newMeetup, ...meetups] //the = sign lets svelte recognize that it needs to be updated and then updates the DOM
     if (id) {
-      meetups.updateMeetup(id, meetupData)
+      fetch(`https://svelte-http-3a7a6.firebaseio.com/meetups/${id}.json`, {
+        method: 'PATCH',
+        body: JSON.stringify(meetupData),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('An error has occured, please try again.')
+        }
+        meetups.updateMeetup(id, meetupData)
+      })
+      .catch(err => {
+        console.log(err)
+      })
     } else {
-      meetups.addMeetup(meetupData)
-
+      fetch("https://svelte-http-3a7a6.firebaseio.com/meetups.json", {
+        method: 'POST',
+        body: JSON.stringify({...meetupData, isFavorite: false}),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('An error occured!')
+        }
+        return res.json()
+      })
+      .then(data => {
+        meetups.addMeetup({...meetupData, isFavorite: false, id: data.name})
+      })
+      .catch(err => {
+        console.log(err)
+      });
     } 
     dispatch('save')
   }
 
   function deleteMeetup() {
-    meetups.removeMeetup(id)
+    fetch(`https://svelte-http-3a7a6.firebaseio.com/meetups/${id}.json`, {
+      method: 'DELETE'
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('An error has occured, please try again.')
+      }
+      meetups.removeMeetup(id)
+    })
+    .catch(err => {
+      console.log(err)
+    })
     dispatch('save')
   }
 
